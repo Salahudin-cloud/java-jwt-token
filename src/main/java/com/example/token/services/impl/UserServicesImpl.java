@@ -1,10 +1,7 @@
 package com.example.token.services.impl;
 
 import com.example.token.entity.Users;
-import com.example.token.model.ListUserRequest;
-import com.example.token.model.RegisterRequest;
-import com.example.token.model.UserResponse;
-import com.example.token.model.UsersUpdateRequest;
+import com.example.token.model.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.UserServices;
 import com.example.token.services.ValidatorServices;
@@ -54,7 +51,7 @@ public class UserServicesImpl implements UserServices {
     public UserResponse update(long id, UsersUpdateRequest usersUpdateRequest) {
         validatorServices.validate(usersUpdateRequest);
 
-        Users users = getUser(id);
+        Users users = findUsers(id);
 
         users.setUsername(usersUpdateRequest.getUsername());
         users.setPassword(usersUpdateRequest.getPassword());
@@ -71,7 +68,7 @@ public class UserServicesImpl implements UserServices {
     @Override
     public void delete(long id) {
         validatorServices.validate(id);
-        Users users = getUser(id);
+        Users users = findUsers(id);
 
         usersRepository.delete(users);
     }
@@ -101,8 +98,19 @@ public class UserServicesImpl implements UserServices {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public UsersGetReponse getUser(long id) {
+        Users user = findUsers(id);
+        return UsersGetReponse.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .created_at(user.getCreatedAt())
+                .update_at(user.getUpdateAt())
+                .build();
+    }
 
-    private Users getUser(long id) {
+
+    private Users findUsers(long id) {
         Users users = usersRepository.getUsersById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
         return users;
     }

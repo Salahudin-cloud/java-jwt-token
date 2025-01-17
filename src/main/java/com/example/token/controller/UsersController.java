@@ -25,7 +25,7 @@ public class UsersController {
         return WebResponse.<String>builder().message("OK").build();
     }
 
-    @PatchMapping(
+    @PutMapping(
             path = "/users/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,6 +64,18 @@ public class UsersController {
         return WebResponse.<List<UserResponse>>builder()
                 .message("OK")
                 .data(userResponses)
+                .build();
+    }
+
+    @GetMapping(
+            path = "/users/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<UsersGetReponse> get(@PathVariable long id){
+       UsersGetReponse user =  userServices.getUser(id);
+        return WebResponse.<UsersGetReponse>builder()
+                .message("OK")
+                .data(user)
                 .build();
     }
 
