@@ -1,14 +1,12 @@
 package com.example.token.controller;
 
-import com.example.token.model.RegisterRequest;
-import com.example.token.model.WebResponse;
+import com.example.token.model.*;
 import com.example.token.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,6 +23,48 @@ public class UsersController {
     public WebResponse<String> registerUser(@RequestBody RegisterRequest registerRequest) {
         userServices.register(registerRequest);
         return WebResponse.<String>builder().message("OK").build();
+    }
+
+    @PatchMapping(
+            path = "/users/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<UserResponse> updateUser(
+            @PathVariable("id") long id,
+            @RequestBody UsersUpdateRequest usersUpdateRequest) {
+      UserResponse userResponse =  userServices.update(id, usersUpdateRequest);
+        return WebResponse.<UserResponse>builder()
+                .message("OK")
+                .data(userResponse)
+                .build();
+    }
+
+    @DeleteMapping(
+            path = "/users/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<String> deleteUser(@PathVariable long id) {
+        userServices.delete(id);
+        return WebResponse.<String>builder()
+                .message("OK")
+                .build();
+    }
+
+    @GetMapping(
+            path = "/users",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<UserResponse>> listUsers(
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer currentPage ,
+            @RequestParam(value = "itemPerPage", defaultValue = "10") Integer itemPerPage){
+        ListUserRequest listUserRequest = new ListUserRequest(currentPage, itemPerPage);
+        List<UserResponse> userResponses = userServices.list(listUserRequest);
+
+        return WebResponse.<List<UserResponse>>builder()
+                .message("OK")
+                .data(userResponses)
+                .build();
     }
 
 }

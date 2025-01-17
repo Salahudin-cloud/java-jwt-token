@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WebResponse<T> {
     private String message;
-    private String data;
+    private T data;
 }
