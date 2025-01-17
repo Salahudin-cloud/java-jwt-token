@@ -1,0 +1,1 @@
+[![wakatime](https://wakatime.com/badge/github/Salahudin-cloud/java-jwt-token.svg)](https://wakatime.com/badge/github/Salahudin-cloud/java-jwt-token)
