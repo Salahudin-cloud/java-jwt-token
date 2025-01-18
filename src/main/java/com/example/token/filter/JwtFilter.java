@@ -38,45 +38,21 @@ public class JwtFilter  extends OncePerRequestFilter {
         String username = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7); // Extract token from the header
-            try {
-                username = jwtServices.extractUsername(token); // Extract username from token
+            token = authHeader.substring(7);
+            username = jwtServices.extractUsername(token);
+        }
 
-                // If username is not null and token is valid, authenticate the user
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = context.getBean(CustomUserDetailsService.class).loadUserByUsername(username);
-
-                    if (jwtServices.validateToken(token, userDetails)) {
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    }
-                }
-            } catch (SignatureException e) {
-                // Token signature is invalid
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token signature");
-                return;
-            } catch (ExpiredJwtException e) {
-                // Token is expired
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
-                return;
-            } catch (MalformedJwtException e) {
-                // Token is malformed
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed token");
-                return;
-            } catch (JwtException e) {
-                // General JWT exception (for other cases)
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
-                return;
-            } catch (Exception e) {
-                // Catch any other exceptions
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Token is not valid");
-                return;
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = context.getBean(CustomUserDetailsService.class).loadUserByUsername(username);
+            if (jwtServices.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // Continue the filter chain if token is valid or not present
         filterChain.doFilter(request, response);
     }
+
 
 }

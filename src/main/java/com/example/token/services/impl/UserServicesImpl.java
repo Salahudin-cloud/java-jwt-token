@@ -34,7 +34,6 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void add(AddUserRequest request) {
         validatorServices.validate(request);
 
@@ -81,7 +80,7 @@ public class UserServicesImpl implements UserServices {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @Override
     public List<UserResponse> list(ListUserRequest listUserRequest) {
         int currentPage = (listUserRequest.getCurrentPage() != null && listUserRequest.getCurrentPage() >= 0)

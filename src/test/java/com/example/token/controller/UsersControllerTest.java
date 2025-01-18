@@ -3,6 +3,7 @@ package com.example.token.controller;
 import com.example.token.entity.Users;
 import com.example.token.model.*;
 import com.example.token.repository.UsersRepository;
+import com.example.token.services.JWTServices;
 import com.example.token.services.impl.UserServicesImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -33,6 +35,11 @@ class UsersControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JWTServices jwtServices;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UsersRepository usersRepository;
@@ -43,20 +50,30 @@ class UsersControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         usersRepository.deleteAll();
     }
 
     @Test
-    void testRegisterSuccess() throws  Exception{
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("user_test1");
+    void testAddNewUserSuccess() throws  Exception{
+        Users users = new Users();
+        users.setUsername("user_1");
+        users.setPassword(passwordEncoder.encode("asdf"));
+        users.setRole("admin");
+        users.setCreatedAt(new Date());
+        users.setUpdateAt(null);
+        usersRepository.save(users);
+
+        AddUserRequest request = new AddUserRequest();
+        request.setUsername("user_test");
         request.setPassword("asdf");
+
+        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isOk()
@@ -67,25 +84,31 @@ class UsersControllerTest {
 
             assertEquals("OK", response.getMessage());
         });
+
+        usersRepository.deleteAll();
     }
 
     @Test
-    void testRegisterExist() throws  Exception{
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
-        usersRepository.save(user);
+    void testAddNewUserExist() throws  Exception{
+        Users users = new Users();
+        users.setUsername("user_1");
+        users.setPassword(passwordEncoder.encode("asdf"));
+        users.setRole("admin");
+        users.setCreatedAt(new Date());
+        users.setUpdateAt(null);
+        usersRepository.save(users);
 
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("user_test");
+        AddUserRequest request = new AddUserRequest();
+        request.setUsername("user_1");
         request.setPassword("asdf");
+
+        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isBadRequest()
@@ -96,18 +119,31 @@ class UsersControllerTest {
 
             assertNotNull(response.getMessage());
         });
+
+        usersRepository.deleteAll();
     }
 
     @Test
-    void testRegisterBadRequest() throws  Exception{
+    void testAddNewUserBadRequest() throws  Exception{
+        Users users = new Users();
+        users.setUsername("user_1");
+        users.setPassword(passwordEncoder.encode("asdf"));
+        users.setRole("admin");
+        users.setCreatedAt(new Date());
+        users.setUpdateAt(null);
+        usersRepository.save(users);
+
         RegisterRequest request = new RegisterRequest();
         request.setUsername("user_test");
         request.setPassword("");
 
+        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
+
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isBadRequest()
@@ -118,6 +154,7 @@ class UsersControllerTest {
 
             assertNotNull(response.getMessage());
         });
+        usersRepository.deleteAll();
     }
 
 

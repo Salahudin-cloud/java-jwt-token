@@ -33,7 +33,7 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> login(@RequestBody RegisterRequest request){
+    public WebResponse<String> register(@RequestBody RegisterRequest request){
          authServices.register(request);
          return WebResponse.<String>builder()
                  .message("OK")
