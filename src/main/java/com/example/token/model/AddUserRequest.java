@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RegisterRequest {
+public class AddUserRequest {
     @NotBlank
     @Size(max = 50)
     private String username;
     @NotBlank
     private String password;
-
 }

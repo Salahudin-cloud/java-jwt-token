@@ -20,8 +20,8 @@ public class UsersController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> registerUser(@RequestBody RegisterRequest registerRequest) {
-        userServices.register(registerRequest);
+    public WebResponse<String> addUser(@RequestBody AddUserRequest addUserRequest) {
+        userServices.add(addUserRequest);
         return WebResponse.<String>builder().message("OK").build();
     }
 

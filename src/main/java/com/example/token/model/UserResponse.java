@@ -12,8 +12,10 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class UserResponse {
+    private Long id;
     private  String username;
     private String password;
+    private String role;
     private Date created_at;
     private Date update_at;
     private Integer currentPage = 0;

@@ -25,6 +25,9 @@ public class Users {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "role")
+    private String role;
+
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 

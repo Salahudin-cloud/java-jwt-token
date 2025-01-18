@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,10 +29,13 @@ public class UserServicesImpl implements UserServices {
     @Autowired
     private ValidatorServices validatorServices;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void register(RegisterRequest request) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void add(AddUserRequest request) {
         validatorServices.validate(request);
 
         if (usersRepository.existsByUsername(request.getUsername())){
@@ -39,7 +44,8 @@ public class UserServicesImpl implements UserServices {
 
         Users user = new Users();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole("user");
         user.setCreatedAt(new Date());
         user.setUpdateAt(null);
 
@@ -54,14 +60,15 @@ public class UserServicesImpl implements UserServices {
         Users users = findUsers(id);
 
         users.setUsername(usersUpdateRequest.getUsername());
-        users.setPassword(usersUpdateRequest.getPassword());
+        users.setPassword(passwordEncoder.encode(usersUpdateRequest.getPassword()));
+        users.setRole(usersUpdateRequest.getRole());
         users.setUpdateAt(new Date());
 
         usersRepository.save(users);
 
         return UserResponse.builder()
                 .username(usersUpdateRequest.getUsername())
-                .password(usersUpdateRequest.getPassword())
+                .password(passwordEncoder.encode(usersUpdateRequest.getPassword()))
                 .build();
     }
 
@@ -73,6 +80,8 @@ public class UserServicesImpl implements UserServices {
         usersRepository.delete(users);
     }
 
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Override
     public List<UserResponse> list(ListUserRequest listUserRequest) {
         int currentPage = (listUserRequest.getCurrentPage() != null && listUserRequest.getCurrentPage() >= 0)
@@ -88,8 +97,10 @@ public class UserServicesImpl implements UserServices {
 
         return page.getContent().stream()
                 .map(user -> new UserResponse(
+                        user.getId(),
                         user.getUsername(),
                         user.getPassword(),
+                        user.getRole(),
                         user.getCreatedAt(),
                         user.getUpdateAt(),
                         currentPage,
@@ -104,6 +115,7 @@ public class UserServicesImpl implements UserServices {
         return UsersGetReponse.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
+                .role(user.getRole())
                 .created_at(user.getCreatedAt())
                 .update_at(user.getUpdateAt())
                 .build();
