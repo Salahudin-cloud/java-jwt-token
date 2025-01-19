@@ -1,8 +1,10 @@
 package com.example.token.controller;
 
+import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import com.example.token.entity.Users;
 import com.example.token.model.*;
@@ -15,8 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Date;
 
@@ -46,6 +51,7 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         usersRepository.deleteAll();
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -193,4 +199,18 @@ class AuthControllerTest {
 
         usersRepository.delete(user);
     }
+
+
+    @Test
+    @WithMockUser(username = "user_test", roles = "USER")
+    public void testLogout() throws Exception {
+        mockMvc.perform(
+                        post("/api/v1/auth/logout")
+                )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.cookie().value("token", nullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("OK"));
+    }
+
+
 }
