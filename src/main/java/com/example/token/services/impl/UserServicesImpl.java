@@ -51,6 +51,7 @@ public class UserServicesImpl implements UserServices {
         usersRepository.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     @Transactional
     public UserResponse update(long id, UsersUpdateRequest usersUpdateRequest) {
@@ -66,8 +67,12 @@ public class UserServicesImpl implements UserServices {
         usersRepository.save(users);
 
         return UserResponse.builder()
+                .id(users.getId())
                 .username(usersUpdateRequest.getUsername())
                 .password(passwordEncoder.encode(usersUpdateRequest.getPassword()))
+                .role(usersUpdateRequest.getRole())
+                .created_at(users.getCreatedAt())
+                .update_at(users.getUpdateAt())
                 .build();
     }
 

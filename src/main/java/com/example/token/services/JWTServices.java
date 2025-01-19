@@ -35,7 +35,7 @@ public class JWTServices {
 
     public String generateToken(String username , String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role.toUpperCase());
+        claims.put("role", "ROLE_" + role.toUpperCase());
         return createToken(username, claims);
     }
 

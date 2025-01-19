@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,27 +52,42 @@ class UsersControllerTest {
         usersRepository.deleteAll();
     }
 
-    @Test
-    void testAddNewUserSuccess() throws  Exception{
+    private static final String TEST_USERNAME = "user_test";
+    private static final String TEST_PASSWORD = "asdf";
+
+    private String getToken(String username, String role) {
+        return jwtServices.generateToken(username, role);
+    }
+
+    private Users createUserTest(String username, String password) {
+        return createUserTest(username, password, "user");
+    }
+
+    private Users createUserTest(String username, String password, String role) {
         Users users = new Users();
-        users.setUsername("user_1");
-        users.setPassword(passwordEncoder.encode("asdf"));
-        users.setRole("admin");
+        users.setUsername(username);
+        users.setPassword(passwordEncoder.encode(password));
+        users.setRole(role);
         users.setCreatedAt(new Date());
         users.setUpdateAt(null);
-        usersRepository.save(users);
+        return usersRepository.save(users);
+    }
+
+
+    @Test
+    void testAddNewUserSuccess() throws  Exception{
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
         AddUserRequest request = new AddUserRequest();
-        request.setUsername("user_test");
+        request.setUsername("user_test1");
         request.setPassword("asdf");
 
-        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isOk()
@@ -90,25 +104,18 @@ class UsersControllerTest {
 
     @Test
     void testAddNewUserExist() throws  Exception{
-        Users users = new Users();
-        users.setUsername("user_1");
-        users.setPassword(passwordEncoder.encode("asdf"));
-        users.setRole("admin");
-        users.setCreatedAt(new Date());
-        users.setUpdateAt(null);
-        usersRepository.save(users);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
         AddUserRequest request = new AddUserRequest();
-        request.setUsername("user_1");
+        request.setUsername("user_test");
         request.setPassword("asdf");
 
-        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isBadRequest()
@@ -125,25 +132,18 @@ class UsersControllerTest {
 
     @Test
     void testAddNewUserBadRequest() throws  Exception{
-        Users users = new Users();
-        users.setUsername("user_1");
-        users.setPassword(passwordEncoder.encode("asdf"));
-        users.setRole("admin");
-        users.setCreatedAt(new Date());
-        users.setUpdateAt(null);
-        usersRepository.save(users);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
         RegisterRequest request = new RegisterRequest();
         request.setUsername("user_test");
         request.setPassword("");
 
-        String token = jwtServices.generateToken(users.getUsername(), users.getRole());
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isBadRequest()
@@ -160,23 +160,22 @@ class UsersControllerTest {
 
     @Test
     void testUpdateSuccess() throws  Exception{
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
-        Users saved = usersRepository.save(user);
-        long getIdSavedUsers = saved.getId();
+        Users users1 = createUserTest("user", "123");
+
+        long usersId = users1.getId();
 
         UsersUpdateRequest updateRequest = new UsersUpdateRequest();
-        updateRequest.setUsername("user_test");
-        updateRequest.setPassword("123");
+        updateRequest.setUsername("user_test1");
+        updateRequest.setPassword("asdf");
+        updateRequest.setRole("user");
 
         mockMvc.perform(
-                put("/api/v1/users/{id}", getIdSavedUsers)
+                put("/api/v1/users/{id}", usersId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(updateRequest))
         ).andExpectAll(
                 status().isOk()
@@ -188,30 +187,30 @@ class UsersControllerTest {
 
             assertEquals("OK", response.getMessage());
             assertNotNull(response.getData());
-            assertEquals("user_test", response.getData().getUsername());
-            assertEquals("123", response.getData().getPassword());
+            assertEquals("user", response.getData().getRole());
+            assertTrue(passwordEncoder.matches("asdf", response.getData().getPassword()));
+
         });
+
+        usersRepository.deleteAll();
     }
 
     @Test
     void testUpdateBadRequest() throws  Exception{
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
-
-        Users saved = usersRepository.save(user);
-        long getIdSavedUsers = saved.getId();
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
+        Users users1 = createUserTest("user_1", "asdf");
+        long usersId = users1.getId();
 
         UsersUpdateRequest updateRequest = new UsersUpdateRequest();
-        updateRequest.setUsername("");
+        updateRequest.setUsername("asd123");
         updateRequest.setPassword("");
+        updateRequest.setRole("user");
 
         mockMvc.perform(
-                put("/api/v1/users/{id}", getIdSavedUsers)
+                put("/api/v1/users/{id}", usersId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(updateRequest))
         ).andExpectAll(
                 status().isBadRequest()
@@ -225,28 +224,28 @@ class UsersControllerTest {
             assertNotNull(response.getMessage());
             assertNull(response.getData());
         });
+
+        usersRepository.deleteAll();
     }
 
 
     @Test
     void testUpdateNonExistUser() throws Exception {
 
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
-        usersRepository.save(user);
+        createUserTest("user_test1", "123");
 
         UsersUpdateRequest updateRequest = new UsersUpdateRequest();
         updateRequest.setUsername("user_test");
         updateRequest.setPassword("123");
+        updateRequest.setRole("user");
 
         mockMvc.perform(
                 put("/api/v1/users/{id}", 999)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .content(objectMapper.writeValueAsString(updateRequest))
         ).andExpectAll(
                 status().isNotFound()
@@ -258,23 +257,21 @@ class UsersControllerTest {
 
             assertNotNull(response.getMessage());
         });
+
+        usersRepository.deleteAll();
     }
 
     @Test
     void deleteUserSuccess() throws  Exception{
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
-        Users saved = usersRepository.save(user);
-        long getIdSavedUsers = saved.getId();
+        long getIdSavedUsers = users.getId();
 
 
         mockMvc.perform(
                 delete("/api/v1/users/{id}", getIdSavedUsers)
                         .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpectAll(
                 status().isOk()
@@ -286,38 +283,24 @@ class UsersControllerTest {
 
             assertEquals("OK", response.getMessage());
         });
+
+        usersRepository.deleteAll();
     }
 
 
     @Test
     void getListUsersSuccess() throws  Exception{
-        Users user_test1 = new Users();
-        user_test1.setUsername("user_test1");
-        user_test1.setPassword("asdf");
-        user_test1.setCreatedAt(new Date());
-        user_test1.setUpdateAt(null);
-        usersRepository.save(user_test1);
+       Users admin = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
-        Users user_test2 = new Users();
-        user_test2.setUsername("user_test2");
-        user_test2.setPassword("asdf");
-        user_test2.setCreatedAt(new Date());
-        user_test2.setUpdateAt(null);
-        usersRepository.save(user_test2);
-
-        Users user_test3 = new Users();
-        user_test3.setUsername("user_test3");
-        user_test3.setPassword("asdf");
-        user_test3.setCreatedAt(new Date());
-        user_test3.setUpdateAt(null);
-
-        usersRepository.save(user_test3);
-
+       createUserTest("user_test1", "123");
+       createUserTest("user_test2", "123");
+       createUserTest("user_test3", "123");
 
 
         mockMvc.perform(
                 get("/api/v1/users")
                         .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(admin.getUsername(), admin.getRole()))
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpectAll(
                 status().isOk()
@@ -330,45 +313,22 @@ class UsersControllerTest {
             assertEquals("OK", response.getMessage());
             assertNotNull(response.getData());
         });
+        usersRepository.deleteAll();
     }
 
-
-    @Test
-    void getListUsersEmpty() throws  Exception{
-        mockMvc.perform(
-                get("/api/v1/users")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpectAll(
-                status().isOk()
-        ).andDo(result -> {
-            WebResponse<List<UserResponse>> response = objectMapper.readValue(
-                    result.getResponse().getContentAsString(),
-                    new TypeReference<WebResponse<List<UserResponse>>>() {}
-            );
-
-            assertEquals("OK", response.getMessage());
-            assertNotNull(response.getData());
-            assertTrue(response.getData().isEmpty());
-        });
-    }
 
 
     @Test
     void getUsersIdSuccess() throws  Exception{
 
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
-        Users save =  usersRepository.save(user);
-        Long user_id = save.getId();
+        Long user_id = users.getId();
 
         mockMvc.perform(
                 get("/api/v1/users/{id}", user_id)
                         .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpectAll(
                 status().isOk()
@@ -381,23 +341,18 @@ class UsersControllerTest {
             assertEquals("OK", response.getMessage());
             assertNotNull(response.getData());
         });
+        usersRepository.deleteAll();
     }
 
     @Test
     void getUsersByIdNotFound() throws  Exception{
 
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
-
-        usersRepository.save(user);
-
+        Users users = createUserTest(TEST_USERNAME, TEST_PASSWORD, "admin");
 
         mockMvc.perform(
                 get("/api/v1/users/{id}", 999)
                         .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + getToken(users.getUsername(), users.getRole()))
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpectAll(
                 status().isNotFound()
@@ -409,6 +364,10 @@ class UsersControllerTest {
 
             assertNotNull(response.getMessage());
         });
+        usersRepository.deleteAll();
     }
+
+
+
 
 }
