@@ -51,7 +51,7 @@ public class UserServicesImpl implements UserServices {
         usersRepository.save(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @Override
     @Transactional
     public UserResponse update(long id, UsersUpdateRequest usersUpdateRequest) {

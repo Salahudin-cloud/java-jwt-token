@@ -47,7 +47,7 @@ public class AuthServicesImpl implements AuthServices {
         Users users = usersRepository.findByUsername(loginRequest.getUsername());
 
         if (users == null) {
-            throw  new UsernameNotFoundException("Invalid username or password");
+            throw  new EntityNotFoundException("Invalid username or password");
         }
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), users.getPassword())) {
