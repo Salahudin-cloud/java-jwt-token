@@ -7,4 +7,16 @@ services:
     environment:
       POSTGRES_PASSWORD: token
       POSTGRES_USER: token
-      POSTGRES_DB: token
+      POSTGRES_DB:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "100mb"
+        reservations:
+          cpus: "0.25"
+          memory: "50mb"
+    volumes:
+      - gdata:/var/lib/postgresql/data
+volumes:
+  gdata:
