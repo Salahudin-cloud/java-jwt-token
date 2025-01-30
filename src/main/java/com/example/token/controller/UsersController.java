@@ -1,6 +1,6 @@
 package com.example.token.controller;
 
-import com.example.token.model.*;
+import com.example.token.dto.*;
 import com.example.token.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

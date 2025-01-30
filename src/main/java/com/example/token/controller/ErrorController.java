@@ -1,7 +1,7 @@
 package com.example.token.controller;
 
 import com.example.token.exception.AuthenticationExeception;
-import com.example.token.model.WebResponse;
+import com.example.token.dto.WebResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;

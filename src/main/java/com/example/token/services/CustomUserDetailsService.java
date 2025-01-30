@@ -1,7 +1,7 @@
 package com.example.token.services;
 
 import com.example.token.entity.Users;
-import com.example.token.model.CustomUserDetails;
+import com.example.token.dto.CustomUserDetails;
 import com.example.token.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

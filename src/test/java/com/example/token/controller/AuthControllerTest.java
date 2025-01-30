@@ -1,13 +1,12 @@
 package com.example.token.controller;
 
-import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import com.example.token.entity.Users;
-import com.example.token.model.*;
+import com.example.token.dto.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.impl.UserServicesImpl;
 import com.fasterxml.jackson.core.type.TypeReference;

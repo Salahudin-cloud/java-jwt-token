@@ -1,4 +1,4 @@
-package com.example.token.model;
+package com.example.token.dto;
 
 import com.example.token.entity.Users;
 import org.springframework.security.core.GrantedAuthority;

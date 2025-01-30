@@ -1,12 +1,7 @@
 package com.example.token.filter;
 
-import com.example.token.model.CustomUserDetails;
 import com.example.token.services.CustomUserDetailsService;
 import com.example.token.services.JWTServices;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

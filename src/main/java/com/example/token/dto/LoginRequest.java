@@ -1,7 +1,6 @@
-package com.example.token.model;
+package com.example.token.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RegisterRequest {
+public class LoginRequest {
+
     @NotBlank
-    @Size(max = 50)
     private String username;
+
     @NotBlank
     private String password;
 

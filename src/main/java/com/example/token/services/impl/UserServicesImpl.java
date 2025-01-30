@@ -1,7 +1,7 @@
 package com.example.token.services.impl;
 
 import com.example.token.entity.Users;
-import com.example.token.model.*;
+import com.example.token.dto.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.UserServices;
 import com.example.token.services.ValidatorServices;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

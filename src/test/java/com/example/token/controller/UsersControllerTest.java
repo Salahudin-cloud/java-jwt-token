@@ -1,7 +1,7 @@
 package com.example.token.controller;
 
 import com.example.token.entity.Users;
-import com.example.token.model.*;
+import com.example.token.dto.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.JWTServices;
 import com.example.token.services.impl.UserServicesImpl;
