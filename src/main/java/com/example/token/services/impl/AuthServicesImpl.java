@@ -10,6 +10,7 @@ import com.example.token.services.JWTServices;
 import com.example.token.services.UserServices;
 import com.example.token.services.ValidatorServices;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class AuthServicesImpl implements AuthServices {
 
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(@Valid LoginRequest loginRequest) {
         validatorServices.validate(loginRequest);
 
         Users users = usersRepository.findByUsername(loginRequest.getUsername());

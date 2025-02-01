@@ -44,20 +44,4 @@ public class AuthController {
                  .message("OK")
                  .build();
     }
-
-    @PostMapping(
-            path = "/logout"
-    )
-    public WebResponse<String> logout(HttpServletRequest request , HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        SecurityContextHolder.clearContext();
-
-        return WebResponse.<String>builder()
-                .message("OK")
-                .build();
-    }
 }
