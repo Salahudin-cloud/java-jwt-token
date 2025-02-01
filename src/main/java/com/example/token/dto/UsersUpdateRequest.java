@@ -1,4 +1,4 @@
-package com.example.token.model;
+package com.example.token.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.example.token.model;
+package com.example.token.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,13 +11,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
-    private Long id;
-    private  String username;
+public class UsersGetReponse {
+    private String username;
     private String password;
     private String role;
     private Date created_at;
     private Date update_at;
-    private Integer currentPage = 0;
-    private Integer itemPerPage = 10;
 }

@@ -1,24 +1,17 @@
 package com.example.token.services.impl;
 
 import com.example.token.entity.Users;
-import com.example.token.model.LoginRequest;
-import com.example.token.model.LoginResponse;
-import com.example.token.model.RegisterRequest;
+import com.example.token.dto.LoginRequest;
+import com.example.token.dto.LoginResponse;
+import com.example.token.dto.RegisterRequest;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.AuthServices;
 import com.example.token.services.JWTServices;
-import com.example.token.services.UserServices;
 import com.example.token.services.ValidatorServices;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

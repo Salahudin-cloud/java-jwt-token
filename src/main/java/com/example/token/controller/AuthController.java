@@ -1,17 +1,16 @@
 package com.example.token.controller;
 
 
-import com.example.token.model.LoginRequest;
-import com.example.token.model.LoginResponse;
-import com.example.token.model.RegisterRequest;
-import com.example.token.model.WebResponse;
+import com.example.token.dto.LoginRequest;
+import com.example.token.dto.LoginResponse;
+import com.example.token.dto.RegisterRequest;
+import com.example.token.dto.WebResponse;
 import com.example.token.services.AuthServices;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

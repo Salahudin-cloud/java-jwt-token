@@ -1,4 +1,4 @@
-package com.example.token.model;
+package com.example.token.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

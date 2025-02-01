@@ -1,6 +1,6 @@
 package com.example.token.services;
 
-import com.example.token.model.*;
+import com.example.token.dto.*;
 
 import java.util.List;
 
