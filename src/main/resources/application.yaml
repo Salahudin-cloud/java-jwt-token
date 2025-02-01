@@ -3,14 +3,12 @@ spring:
     name: token
 
   datasource:
-    url: "jdbc:postgresql://127.0.0.1:5433/token"
+    url: "jdbc:postgresql://localhost:5432/token"
     username: "token"
     password: "token"
   jpa:
     hibernate:
       ddl-auto: update
-      properties:
-        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   output:
     ansi:
       enabled: always

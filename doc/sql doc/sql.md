@@ -1,7 +1,7 @@
 # SQL Documentation for Java JWT token
 
 ### 1. Database Overview
-- nama database : jwt
+- nama database : token
 - Tujuan database : untuk mennyimpan data pengguna
 - Jumlah tabel : 1 
 

@@ -3,7 +3,7 @@ services:
     container_name: "token"
     image: postgres:17-alpine3.20
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: token
       POSTGRES_USER: token
