@@ -118,23 +118,10 @@ Authorization: Bearer <your_token_here>
 ```markdown
 Authorization: Bearer <your_token_here>
 ```
-- Request Body :
-```json
-{
-  "username" : "user_test", 
-  "password" : "test"
-}
-```
 - Response Body (Success) :
 ```json
 {
   "message": "OK"
-}
-```
-- Response Body (Failed) example :
-```json
-{
-  "message": "User not found with id 30"
 }
 ```
 ### 4. List user
