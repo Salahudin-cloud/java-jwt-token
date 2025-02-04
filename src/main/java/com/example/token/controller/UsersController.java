@@ -2,18 +2,19 @@ package com.example.token.controller;
 
 import com.example.token.dto.*;
 import com.example.token.services.UserServices;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor // tambahkan ini untuk mengganti autowired
 @RequestMapping("/api/v1")
 public class UsersController {
 
-    @Autowired
-    private UserServices userServices;
+
+    private final UserServices userServices; // pake final
 
     @PostMapping(
             path = "/users",

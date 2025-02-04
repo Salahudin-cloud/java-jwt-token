@@ -1,6 +1,6 @@
 package com.example.token.services.impl;
 
-import com.example.token.entity.Users;
+import com.example.token.entity.User;
 import com.example.token.dto.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.UserServices;
@@ -40,12 +40,12 @@ public class UserServicesImpl implements UserServices {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Users already registered");
         }
 
-        Users user = new Users();
+        User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("user");
         user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
+        user.setUpdatedAt(null);
 
         usersRepository.save(user);
     }
@@ -56,31 +56,30 @@ public class UserServicesImpl implements UserServices {
     public UserResponse update(long id, UsersUpdateRequest usersUpdateRequest) {
         validatorServices.validate(usersUpdateRequest);
 
-        Users users = findUsers(id);
+        User user = findUsers(id);
 
-        users.setUsername(usersUpdateRequest.getUsername());
-        users.setPassword(passwordEncoder.encode(usersUpdateRequest.getPassword()));
-        users.setRole(usersUpdateRequest.getRole());
-        users.setUpdateAt(new Date());
+        user.setUsername(usersUpdateRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(usersUpdateRequest.getPassword()));
+        user.setRole(usersUpdateRequest.getRole());
 
-        usersRepository.save(users);
+        usersRepository.save(user);
 
         return UserResponse.builder()
-                .id(users.getId())
+                .id(user.getId())
                 .username(usersUpdateRequest.getUsername())
                 .password(passwordEncoder.encode(usersUpdateRequest.getPassword()))
                 .role(usersUpdateRequest.getRole())
-                .created_at(users.getCreatedAt())
-                .update_at(users.getUpdateAt())
+                .created_at(user.getCreatedAt())
+                .update_at(user.getUpdatedAt())
                 .build();
     }
 
     @Override
     public void delete(long id) {
         validatorServices.validate(id);
-        Users users = findUsers(id);
+        User user = findUsers(id);
 
-        usersRepository.delete(users);
+        usersRepository.delete(user);
     }
 
 
@@ -96,7 +95,7 @@ public class UserServicesImpl implements UserServices {
                 : 10;
 
 
-        Page<Users> page = usersRepository.findAll(PageRequest.of(currentPage, itemPerPage));
+        Page<User> page = usersRepository.findAll(PageRequest.of(currentPage, itemPerPage));
 
         return page.getContent().stream()
                 .map(user -> new UserResponse(
@@ -105,7 +104,7 @@ public class UserServicesImpl implements UserServices {
                         user.getPassword(),
                         user.getRole(),
                         user.getCreatedAt(),
-                        user.getUpdateAt(),
+                        user.getUpdatedAt(),
                         currentPage,
                         itemPerPage
                 ))
@@ -114,19 +113,18 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UsersGetReponse getUser(long id) {
-        Users user = findUsers(id);
+        User user = findUsers(id);
         return UsersGetReponse.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .role(user.getRole())
                 .created_at(user.getCreatedAt())
-                .update_at(user.getUpdateAt())
+                .update_at(user.getUpdatedAt())
                 .build();
     }
 
 
-    private Users findUsers(long id) {
-        Users users = usersRepository.getUsersById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
-        return users;
+    private User findUsers(long id) {
+        return usersRepository.getUsersById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
     }
 }

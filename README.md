@@ -48,7 +48,7 @@
 ## User
 ### 1. add user
 - Method : POST
-- Endpoint : /api/v1/users
+- Endpoint : /api/v1/user
 - Role: admin
 - Headers :
 ```markdown
@@ -75,7 +75,7 @@ Authorization: Bearer <your_token_here>
 ```
 ### 2. update user
 - Method : PUT
-- Endpoint : /api/v1/users/{id}
+- Endpoint : /api/v1/user/{id}
 - Role: admin
 - Headers :
 ```markdown
@@ -112,7 +112,7 @@ Authorization: Bearer <your_token_here>
 ```
 ### 3. delete user
 - Method : DELETE
-- Endpoint : /api/v1/users/{id}
+- Endpoint : /api/v1/user/{id}
 - Role: admin
 - Headers :
 ```markdown
@@ -126,7 +126,7 @@ Authorization: Bearer <your_token_here>
 ```
 ### 4. List user
 - Method : GET
-- Endpoint : /api/v1/users
+- Endpoint : /api/v1/user
 - Role: admin
 - Headers :
 ```markdown

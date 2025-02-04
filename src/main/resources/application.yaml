@@ -9,6 +9,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+#      berhati hati menggunakan ddl-auto
   output:
     ansi:
       enabled: always

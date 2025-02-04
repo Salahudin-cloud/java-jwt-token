@@ -1,6 +1,6 @@
 package com.example.token.dto;
 
-import com.example.token.entity.Users;
+import com.example.token.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,25 +10,25 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    private Users users;
+    private User user;
 
-    public CustomUserDetails(Users users) {
-        this.users = users;
+    public CustomUserDetails(User user) {
+        this.user = user;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = "ROLE_" + users.getRole().toUpperCase();
+        String role = "ROLE_" + user.getRole().toUpperCase();
         return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
     @Override
     public String getPassword() {
-        return users.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return users.getUsername();
+        return user.getUsername();
     }
 
     @Override

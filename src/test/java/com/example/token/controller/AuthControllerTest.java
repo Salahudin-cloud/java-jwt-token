@@ -1,11 +1,12 @@
 package com.example.token.controller;
 
+import com.example.token.entity.User;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
-import com.example.token.entity.Users;
+
 import com.example.token.dto.*;
 import com.example.token.repository.UsersRepository;
 import com.example.token.services.impl.UserServicesImpl;
@@ -28,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 class AuthControllerTest {
     @Autowired
@@ -36,7 +36,6 @@ class AuthControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
 
     @Autowired
     private UsersRepository usersRepository;
@@ -46,12 +45,6 @@ class AuthControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @BeforeEach
-    void setUp() {
-        usersRepository.deleteAll();
-        SecurityContextHolder.clearContext();
-    }
 
     @Test
     void testRegisterSuccess() throws  Exception{
@@ -78,13 +71,14 @@ class AuthControllerTest {
 
     @Test
     void testRegisterUserExist() throws  Exception{
-        Users user = new Users();
-        user.setUsername("user_test");
-        user.setPassword("asdf");
-        user.setRole("user");
-        user.setCreatedAt(new Date());
-        user.setUpdateAt(null);
-        usersRepository.save(user);
+
+        usersRepository.save(
+                User.builder()
+                        .username("user_test")
+                        .password(passwordEncoder.encode("asdf"))
+                        .role("user")
+                .build());
+
 
         RegisterRequest request = new RegisterRequest();
         request.setUsername("user_test1");
@@ -134,7 +128,7 @@ class AuthControllerTest {
 
     @Test
     void testLoginSuccess() throws  Exception{
-        Users user = new Users();
+        User user = new User();
         user.setUsername("user_test");
         user.setPassword(passwordEncoder.encode("asdf"));
         user.setRole("user");
@@ -169,7 +163,7 @@ class AuthControllerTest {
 
     @Test
     void testLoginBadRequest() throws  Exception{
-        Users user = new Users();
+        User user = new User();
         user.setUsername("user_test");
         user.setPassword(passwordEncoder.encode("asdf"));
         user.setRole("user");
