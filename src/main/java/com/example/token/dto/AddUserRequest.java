@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AddUserRequest {
-    @NotBlank
+    @NotBlank(message = "usernbam tidak boleh kosong")
     @Size(max = 50)
     private String username;
     @NotBlank

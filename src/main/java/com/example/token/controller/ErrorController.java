@@ -1,6 +1,6 @@
 package com.example.token.controller;
 
-import com.example.token.exception.AuthenticationExeception;
+import com.example.token.exception.AuthenticationException;
 import com.example.token.dto.WebResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -32,8 +32,8 @@ public class ErrorController {
                 .body(WebResponse.<String>builder().message(e.getMessage()).build());
     }
 
-    @ExceptionHandler(AuthenticationExeception.class)
-    public ResponseEntity<WebResponse<String>> handleAuthenticationException(AuthenticationExeception e) {
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<WebResponse<String>> handleAuthenticationException(AuthenticationException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(WebResponse.<String>builder().message(e.getMessage()).build());
     }
